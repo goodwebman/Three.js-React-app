@@ -8,9 +8,11 @@ Title: macbook pro M3 16 inch 2024
 */
 
 import { useGLTF, useTexture } from '@react-three/drei'
-import type { JSX } from 'react'
+import { useEffect, type JSX } from 'react'
 import * as THREE from 'three'
 import type { GLTF } from 'three-stdlib'
+import { noChangeParts } from '../../constants'
+import useMackbookStore from '../../store'
 
 type GLTFResult = GLTF & {
 	nodes: {
@@ -58,12 +60,34 @@ type GLTFResult = GLTF & {
 	animations: THREE.AnimationAction[]
 }
 
-export function Model(props: JSX.IntrinsicElements['group']) {
-	const { nodes, materials } = useGLTF(
+export default function Macbook16Model(props: JSX.IntrinsicElements['group']) {
+	const { nodes, materials, scene } = useGLTF(
 		'/models/macbook-16.glb',
 	) as unknown as GLTFResult
 
+  const { color } = useMackbookStore()
+
 	const texture = useTexture('/screen.png')
+
+  useEffect(() => {
+		scene.traverse((child: THREE.Object3D) => {
+			if ((child as THREE.Mesh).isMesh) {
+				const mesh = child as THREE.Mesh
+
+				if (!noChangeParts.includes(mesh.name)) {
+					if (Array.isArray(mesh.material)) {
+						mesh.material.forEach(mat => {
+							const matWithColor = mat as THREE.MeshStandardMaterial
+							matWithColor.color.set(color)
+						})
+					} else {
+						const matWithColor = mesh.material as THREE.MeshStandardMaterial
+						matWithColor.color.set(color)
+					}
+				}
+			}
+		})
+	}, [color])
 	return (
 		<group {...props} dispose={null}>
 			<mesh
