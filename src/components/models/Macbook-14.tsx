@@ -69,6 +69,10 @@ export default function MacbookModel14(props: JSX.IntrinsicElements['group']) {
 	const { color } = useMackbookStore()
 
 	const texture = useTexture('/screen.png')
+	// eslint-disable-next-line react-hooks/immutability
+	texture.colorSpace = THREE.SRGBColorSpace
+	// eslint-disable-next-line react-hooks/immutability
+	texture.needsUpdate = true
 
 	useEffect(() => {
 		scene.traverse((child: THREE.Object3D) => {

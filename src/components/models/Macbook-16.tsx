@@ -65,11 +65,15 @@ export default function Macbook16Model(props: JSX.IntrinsicElements['group']) {
 		'/models/macbook-16.glb',
 	) as unknown as GLTFResult
 
-  const { color } = useMackbookStore()
+	const { color } = useMackbookStore()
 
 	const texture = useTexture('/screen.png')
+	// eslint-disable-next-line react-hooks/immutability
+	texture.colorSpace = THREE.SRGBColorSpace
+  	// eslint-disable-next-line react-hooks/immutability
+	texture.needsUpdate = true
 
-  useEffect(() => {
+	useEffect(() => {
 		scene.traverse((child: THREE.Object3D) => {
 			if ((child as THREE.Mesh).isMesh) {
 				const mesh = child as THREE.Mesh
